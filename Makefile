@@ -43,7 +43,7 @@ endif
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
-# TOOLPREFIX = riscv64-linux-gnu-
+TOOLPREFIX = riscv64-linux-gnu-
 
 # Try to infer the correct TOOLPREFIX if not set
 ifndef TOOLPREFIX
@@ -87,6 +87,8 @@ endif
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]nopie'),)
 CFLAGS += -fno-pie -nopie
 endif
+
+CFLAGS += -fno-pie
 
 LDFLAGS = -z max-page-size=4096
 
@@ -152,6 +154,7 @@ UPROGS=\
 	$U/_sleep\
 	$U/_pingpong\
 	$U/_primes\
+	$U/_find\
 
 
 ifeq ($(LAB),syscall)
