@@ -80,3 +80,19 @@ kalloc(void)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
 }
+
+struct {
+  struct spinlock lock;
+  uint a[(PHYSTOP-KERNBASE)/PGSIZE];
+} count;
+
+void add_count(uint64 pa) {
+  if (pa>PHYSTOP) {
+    panic("pa more than PHYSTOP");
+  }
+  if (pa >= KERNBASE) {
+      acquire(&count.lock);
+      count.a[(pa - KERNBASE) >> PGSHIFT]++;
+      release(&count.lock);
+  }
+}

@@ -69,19 +69,26 @@ usertrap(void)
     // ok
   } else {
     int cause = r_scause();
-    if (cause == 0x0f || cause == 0xd) // page fault
+    uint64 va = r_stval();
+
+    switch (cause)
     {
-      uint64 va = r_stval();
+    case 0xd /* load page fault */:
+      /* code */
+
+    case 0x0f /* store page fault */:
       if (handle_page(va, p) == -1)
       {
         p->killed = 1;
       }
-    }
-    else
-    {
+      break;
+
+    default:
       printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
       printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
       p->killed = 1;
+
+      break;
     }
   }
 
